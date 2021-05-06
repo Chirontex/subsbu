@@ -17,6 +17,15 @@ use Subsbu\Main;
 require_once __DIR__.'/vendor/autoload.php';
 require_once __DIR__.'/subsbu-autoload.php';
 
+define('SUBSBU_CONFIG', [
+    'db' => [
+        'prefix' => 'subsbu_',
+        'tables' => [
+            'audience' => 'audience'
+        ]
+    ]
+]);
+
 new Main(
     new EntryPointInjector(
         plugin_dir_path(__FILE__),

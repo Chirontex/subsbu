@@ -6,6 +6,7 @@
 namespace Subsbu;
 
 use Magnate\EntryPoint;
+use Subsbu\Tables\AudienceTable;
 
 /**
  * @final
@@ -20,6 +21,8 @@ final class Main extends EntryPoint
      */
     protected function init() : self
     {
+
+        new AudienceTable;
         
         return $this;
 
