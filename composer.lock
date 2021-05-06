@@ -1,0 +1,73 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "03161d5ec027a1168278cfd125ad9457",
+    "packages": [
+        {
+            "name": "magnate/magnate",
+            "version": "0.8.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/magnatefw/magnate.git",
+                "reference": "d3f81004cfc2ac1a45ece7b0640fe674ec5d7758"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/magnatefw/magnate/zipball/d3f81004cfc2ac1a45ece7b0640fe674ec5d7758",
+                "reference": "d3f81004cfc2ac1a45ece7b0640fe674ec5d7758",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.4.0"
+            },
+            "type": "framework",
+            "autoload": {
+                "psr-4": {
+                    "Magnate\\": "src",
+                    "Magnate\\Tables\\": "src/tables",
+                    "Magnate\\Interfaces\\": "src/interfaces",
+                    "Magnate\\Injectors\\": "src/injectors",
+                    "Magnate\\Helpers\\": "src/helpers",
+                    "Magnate\\Exceptions\\": "src/exceptions"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Dmitry Shumilin",
+                    "email": "chirontex@yandex.com",
+                    "homepage": "https://chirontex.github.io",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Framework for WordPress plugin development.",
+            "homepage": "https://github.com/magnatefw/magnate",
+            "keywords": [
+                "activerecord",
+                "framework",
+                "plugin",
+                "wordpress"
+            ],
+            "support": {
+                "issues": "https://github.com/magnatefw/magnate/issues",
+                "source": "https://github.com/magnatefw/magnate/tree/0.8.7"
+            },
+            "time": "2021-05-06T12:07:52+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.0.0"
+}
