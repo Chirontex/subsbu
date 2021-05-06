@@ -8,20 +8,20 @@ namespace Subsbu\Models;
 use Magnate\Tables\ActiveRecord;
 
 /**
- * Audience model.
- * @since 0.0.3
+ * Settings model
+ * @since 0.0.4
  */
-class Audience extends ActiveRecord
+class Settings extends ActiveRecord
 {
 
     /**
-     * @since 0.0.3
+     * @since 0.0.4
      */
     public static function tableName() : string
     {
         
         return SUBSBU_CONFIG['db']['prefix'].
-            SUBSBU_CONFIG['db']['tables']['audience'];
+            SUBSBU_CONFIG['db']['tables']['settings'];
 
     }
 
