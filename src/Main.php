@@ -7,6 +7,7 @@ namespace Subsbu;
 
 use Magnate\EntryPoint;
 use Subsbu\Tables\AudienceTable;
+use Subsbu\Tables\SettingsTable;
 
 /**
  * @final
@@ -23,6 +24,7 @@ final class Main extends EntryPoint
     {
 
         new AudienceTable;
+        new SettingsTable;
         
         return $this;
 
