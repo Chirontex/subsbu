@@ -14,6 +14,9 @@ use Magnate\Tables\ActiveRecord;
 class Audience extends ActiveRecord
 {
 
+    /**
+     * @since 0.0.3
+     */
     public static function tableName(): string
     {
         
