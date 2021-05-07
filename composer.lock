@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "03161d5ec027a1168278cfd125ad9457",
+    "content-hash": "586d276ec3f59c6323424e07dcb715f4",
     "packages": [
         {
             "name": "magnate/magnate",
-            "version": "0.8.8",
+            "version": "0.8.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/magnatefw/magnate.git",
-                "reference": "b30c017969ed982d602c45bc88a53288c745e819"
+                "reference": "72aa0a7690646a1ba8224a79f6188f3ca3b9b994"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magnatefw/magnate/zipball/b30c017969ed982d602c45bc88a53288c745e819",
-                "reference": "b30c017969ed982d602c45bc88a53288c745e819",
+                "url": "https://api.github.com/repos/magnatefw/magnate/zipball/72aa0a7690646a1ba8224a79f6188f3ca3b9b994",
+                "reference": "72aa0a7690646a1ba8224a79f6188f3ca3b9b994",
                 "shasum": ""
             },
             "require": {
@@ -56,9 +56,9 @@
             ],
             "support": {
                 "issues": "https://github.com/magnatefw/magnate/issues",
-                "source": "https://github.com/magnatefw/magnate/tree/0.8.8"
+                "source": "https://github.com/magnatefw/magnate/tree/0.8.9"
             },
-            "time": "2021-05-07T02:14:52+00:00"
+            "time": "2021-05-07T20:00:35+00:00"
         }
     ],
     "packages-dev": [],
