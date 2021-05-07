@@ -10,7 +10,7 @@ use Magnate\Exceptions\ActiveRecordException;
 use Subsbu\Tables\AudienceTable;
 use Subsbu\Tables\SettingsTable;
 use Subsbu\Models\Audience;
-use Subsbu\Models\Post;
+use WP_REST_Request;
 
 /**
  * @final
@@ -30,6 +30,7 @@ final class Main extends EntryPoint
         new SettingsTable;
 
         $this
+            ->restApiInit()
             ->scriptAdd()
             ->buttonShortcodeInit();
         
@@ -72,32 +73,18 @@ final class Main extends EntryPoint
                 return ob_get_clean();
 
             } else {
-            
-                try {
 
-                    $post = Post::find((int)$atts['event']);
+                $post = get_post((int)$atts['event']);
 
-                } catch (ActiveRecordException $e) {
-
-                    return;
-
-                }
+                if (empty($post)) return;
 
                 if ($post->post_type !== 'ajde_events') return;
 
-                $postmeta = $this->wpdb->get_results(
-                    "SELECT *
-                        FROM `".$this->wpdb->prefix."postmeta` AS t
-                        WHERE t.post_id = '".$post->ID."'
-                        AND t.meta_key = 'evcal_srow'",
-                    ARRAY_A
-                );
-
-                if (empty($postmeta)) return;
+                $start = (int)$post->evcal_srow;
 
                 ini_set('date.timezone', '');
 
-                if (time() > $postmeta[0]['meta_value']) return;
+                if (time() > $start) return;
 
                 $audience = Audience::where(
                     [
@@ -124,7 +111,7 @@ final class Main extends EntryPoint
                 ob_start();
 
 ?>
-<button type="button" id="<?= htmlspecialchars($atts['id']) ?>-user-authorized" class="<?= htmlspecialchars($atts['class']) ?>" style="<?= htmlspecialchars($atts['style']) ?>" onclick="SubsbuClient.subscribe('<?= htmlspecialchars($atts['id']) ?>-user-authorized', <?= $post->ID ?>, <?= $user_id ?>, '<?= $content[1] ?>');"><?= $content[0] ?></button>
+<button type="button" id="<?= htmlspecialchars($atts['id']) ?>-user-authorized" class="<?= htmlspecialchars($atts['class']) ?>" style="<?= htmlspecialchars($atts['style']) ?>" onclick="SubsbuClient.subscribe('<?= htmlspecialchars($atts['id']) ?>-user-authorized', <?= $post->ID ?>, <?= $user_id ?>, '<?= $content[1] ?>', '<?= wp_create_nonce('subsbu-subscribe') ?>');"><?= $content[0] ?></button>
 <?php
 
                 return ob_get_clean();
@@ -154,6 +141,120 @@ final class Main extends EntryPoint
                 [],
                 '0.0.2',
                 true
+            );
+
+        });
+
+        return $this;
+
+    }
+
+    /**
+     * Initialize REST API routes.
+     * @since 0.1.0
+     * 
+     * @return $this
+     */
+    protected function restApiInit() : self
+    {
+
+        add_action('rest_api_init', function() {
+
+            register_rest_route(
+                'subsbu/v1',
+                '/subscribe',
+                [
+                    'methods' => 'POST',
+                    'callback' => function(WP_REST_Request $request) {
+
+                        $event = $request->get_param('subsbu-client-event');
+                        $user_id = $request->get_param('subsbu-client-user');
+
+                        if (!empty($event) &&
+                            !empty($user_id)) {
+
+                            $event = (int)$event;
+                            $user_id = (int)$user_id;
+
+                            $post = get_post($event);
+
+                            if (empty($post)) return [
+                                'code' => -97,
+                                'message' => 'Event not found.'
+                            ];
+
+                            if ($post->post_type !==
+                                'ajde_events') return [
+                                    'code' => -98,
+                                    'message' => 'Invalid post type.'
+                                ];
+
+                            try {
+
+                                $audience = Audience::where(
+                                    [
+                                        [
+                                            'post_id' => [
+                                                'condition' => '= %d',
+                                                'value' => $event
+                                            ]
+                                        ]
+                                    ]
+                                )->first();
+
+                                $subscribers = explode(';', $audience->subscribers);
+
+                                if (array_search($user_id, $subscribers) ===
+                                    false) {
+
+                                    $subscribers[] = $user_id;
+
+                                    $subscribers = implode(';', $subscribers);
+
+                                    $audience->subscribers = $subscribers;
+                                    $audience->save();
+
+                                }
+
+                            } catch (ActiveRecordException $e) {
+
+                                if ($e->getCode() === -9) {
+
+                                    $audience = new Audience;
+
+                                    $audience->post_id = $event;
+                                    $audience->subscribers = (string)$user_id;
+                                    $audience->save();
+
+                                } else return [
+                                    'code' => $e->getCode(),
+                                    'message' => $e->getMessage()
+                                ];
+
+                            }
+
+                            return [
+                                'code' => 0,
+                                'message' => 'Success.'
+                            ];
+
+                        } else return [
+                            'code' => -99,
+                            'message' => 'Too few arguments for this request.'
+                        ];
+
+                    },
+                    'permission_callback' => function(WP_REST_Request $request) {
+
+                        require_once ABSPATH.WPINC.'/pluggable.php';
+
+                        return wp_verify_nonce(
+                            $request->get_param('subsbu-client-nonce'),
+                            'subsbu-subscribe'
+                        ) !== false;
+
+                    }
+                ]
             );
 
         });
