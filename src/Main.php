@@ -26,6 +26,10 @@ final class Main extends EntryPoint
 
         new AudienceTable;
         new SettingsTable;
+
+        $this
+            ->scriptAdd()
+            ->buttonShortcodeInit();
         
         return $this;
 
@@ -83,10 +87,10 @@ final class Main extends EntryPoint
                     if (array_search($user_id, $subscribers) === false) {
 
 ?>
-<form action="" method="post">
+<form action="" method="post" id="subsbuForm">
 <?php wp_nonce_field('subsbu-subscribe', 'subsbu-subscribe-wpnp') ?>
 </form>
-<button type="button" class="<?= htmlspecialchars($atts['class']) ?>" style="<?= htmlspecialchars($atts['style']) ?>"><?= $content[0] ?></button>
+<button type="button" class="<?= htmlspecialchars($atts['class']) ?>" style="<?= htmlspecialchars($atts['style']) ?>" onclick="SubsbuClient.subscribe(<?= $user_id ?>);"><?= $content[0] ?></button>
 <?php
 
                     } else {
@@ -102,6 +106,31 @@ final class Main extends EntryPoint
             }
 
             return ob_get_clean();
+
+        });
+
+        return $this;
+
+    }
+
+    /**
+     * Add client script.
+     * @since 0.0.7
+     * 
+     * @return $this
+     */
+    protected function scriptAdd() : self
+    {
+
+        add_action('wp_enqueue_scripts', function() {
+
+            wp_enqueue_script(
+                'subsbu-client',
+                SUBSBU_CONFIG['assets']['js'].'subsbu-client.js',
+                [],
+                '0.0.1',
+                true
+            );
 
         });
 
