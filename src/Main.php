@@ -6,6 +6,8 @@
 namespace Subsbu;
 
 use Magnate\EntryPoint;
+use Magnate\Injectors\EntryPointInjector;
+use Magnate\Injectors\AdminPageInjector;
 use Magnate\Exceptions\ActiveRecordCollectionException;
 use Subsbu\Tables\AudienceTable;
 use Subsbu\Tables\SettingsTable;
@@ -28,6 +30,22 @@ final class Main extends EntryPoint
 
         new AudienceTable;
         new SettingsTable;
+
+        new SettingsPage(
+            new EntryPointInjector($this->path, $this->url),
+            (new AdminPageInjector(
+                'subsbu-settings',
+                $this->path.SUBSBU_CONFIG['views'].'settings.php',
+                'Subsbu: настройки',
+                'Subsbu',
+                8
+            ))->addStyle(
+                'bootstrap',
+                'https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css',
+                [],
+                '5.0.0'
+            )
+        );
 
         $this
             ->restApiInit()
