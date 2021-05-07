@@ -55,6 +55,8 @@ final class Main extends EntryPoint
 
             $user_id = get_current_user_id();
 
+            if (empty($content)) $content = 'Зарегистрироваться|||Вы уже зарегистрированы';
+
             $content = explode('|||', $content);
 
             ob_start();
@@ -67,6 +69,19 @@ final class Main extends EntryPoint
 
             } else {
 
+                $posts = $this->wpdb->get_results(
+                    $this->wpdb->prepare(
+                        "SELECT *
+                            FROM `".$this->wpdb->prefix."posts` AS t
+                            WHERE t.post_type = 'ajde_events'
+                            AND t.ID = %d",
+                        (int)$atts['event']
+                    ),
+                    ARRAY_A
+                );
+
+                if (empty($posts)) return ob_get_clean();
+
                 $audience = Audience::where(
                     [
                         [
@@ -78,13 +93,26 @@ final class Main extends EntryPoint
                     ]
                 )->all();
 
+                $subscribed = false;
+
                 if (!empty($audience)) {
 
                     $audience = $audience[0];
 
                     $subscribers = explode(';', $audience->subscribers);
 
-                    if (array_search($user_id, $subscribers) === false) {
+                    if (array_search($user_id, $subscribers) !==
+                        false) $subscribed = true;
+
+                }
+
+                if ($subscribed) {
+
+?>
+<button type="button" class="<?= htmlspecialchars($atts['class']) ?>" style="<?= htmlspecialchars($atts['style']) ?>" disabled="true"><?= $content[1] ?></button>
+<?php
+
+                } else {
 
 ?>
 <form action="" method="post" id="subsbuForm">
@@ -92,14 +120,6 @@ final class Main extends EntryPoint
 </form>
 <button type="button" class="<?= htmlspecialchars($atts['class']) ?>" style="<?= htmlspecialchars($atts['style']) ?>" onclick="SubsbuClient.subscribe(<?= $user_id ?>);"><?= $content[0] ?></button>
 <?php
-
-                    } else {
-
-?>
-<button type="button" class="<?= htmlspecialchars($atts['class']) ?>" style="<?= htmlspecialchars($atts['style']) ?>" disabled="true"><?= $content[1] ?></button>
-<?php
-
-                    }
 
                 }
 
@@ -126,7 +146,7 @@ final class Main extends EntryPoint
 
             wp_enqueue_script(
                 'subsbu-client',
-                SUBSBU_CONFIG['assets']['js'].'subsbu-client.js',
+                $this->url.SUBSBU_CONFIG['assets']['js'].'subsbu-client.js',
                 [],
                 '0.0.1',
                 true
