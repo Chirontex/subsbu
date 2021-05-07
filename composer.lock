@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "magnate/magnate",
-            "version": "0.8.7",
+            "version": "0.8.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/magnatefw/magnate.git",
-                "reference": "d3f81004cfc2ac1a45ece7b0640fe674ec5d7758"
+                "reference": "b30c017969ed982d602c45bc88a53288c745e819"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/magnatefw/magnate/zipball/d3f81004cfc2ac1a45ece7b0640fe674ec5d7758",
-                "reference": "d3f81004cfc2ac1a45ece7b0640fe674ec5d7758",
+                "url": "https://api.github.com/repos/magnatefw/magnate/zipball/b30c017969ed982d602c45bc88a53288c745e819",
+                "reference": "b30c017969ed982d602c45bc88a53288c745e819",
                 "shasum": ""
             },
             "require": {
@@ -56,9 +56,9 @@
             ],
             "support": {
                 "issues": "https://github.com/magnatefw/magnate/issues",
-                "source": "https://github.com/magnatefw/magnate/tree/0.8.7"
+                "source": "https://github.com/magnatefw/magnate/tree/0.8.8"
             },
-            "time": "2021-05-06T12:07:52+00:00"
+            "time": "2021-05-07T02:14:52+00:00"
         }
     ],
     "packages-dev": [],
