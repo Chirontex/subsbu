@@ -6,9 +6,11 @@
 namespace Subsbu;
 
 use Magnate\EntryPoint;
+use Magnate\Exceptions\ActiveRecordException;
 use Subsbu\Tables\AudienceTable;
 use Subsbu\Tables\SettingsTable;
 use Subsbu\Models\Audience;
+use Subsbu\Models\Post;
 
 /**
  * @final
@@ -52,48 +54,61 @@ final class Main extends EntryPoint
                 'class' => '',
                 'style' => ''
             ], $atts);
-
-            $user_id = get_current_user_id();
-
-            if (empty($content)) $content = 'Зарегистрироваться|||Вы уже зарегистрированы';
+            
+            if (empty($content)) $content = 'Зарегистрироваться|||Вы зарегистрированы!';
 
             $content = explode('|||', $content);
-
-            ob_start();
+            
+            $user_id = get_current_user_id();
 
             if (empty($user_id)) {
+
+                ob_start();
 
 ?>
 <button type="button" id="<?= htmlspecialchars($atts['id']) ?>" class="<?= htmlspecialchars($atts['class']) ?>" style="<?= htmlspecialchars($atts['style']) ?>"><?= $content[0] ?></button>
 <?php
 
-            } else {
+                return ob_get_clean();
 
-                $posts = $this->wpdb->get_results(
-                    $this->wpdb->prepare(
-                        "SELECT *
-                            FROM `".$this->wpdb->prefix."posts` AS t
-                            WHERE t.post_type = 'ajde_events'
-                            AND t.ID = %d",
-                        (int)$atts['event']
-                    ),
+            } else {
+            
+                try {
+
+                    $post = Post::find((int)$atts['event']);
+
+                } catch (ActiveRecordException $e) {
+
+                    return;
+
+                }
+
+                if ($post->post_type !== 'ajde_events') return;
+
+                $postmeta = $this->wpdb->get_results(
+                    "SELECT *
+                        FROM `".$this->wpdb->prefix."postmeta` AS t
+                        WHERE t.post_id = '".$post->ID."'
+                        AND t.meta_key = 'evcal_srow'",
                     ARRAY_A
                 );
 
-                if (empty($posts)) return ob_get_clean();
+                if (empty($postmeta)) return;
+
+                ini_set('date.timezone', '');
+
+                if (time() > $postmeta[0]['meta_value']) return;
 
                 $audience = Audience::where(
                     [
                         [
                             'post_id' => [
                                 'condition' => '= %d',
-                                'value' => (int)$atts['event']
+                                'value' => $post->ID
                             ]
                         ]
                     ]
                 )->all();
-
-                $subscribed = false;
 
                 if (!empty($audience)) {
 
@@ -101,31 +116,20 @@ final class Main extends EntryPoint
 
                     $subscribers = explode(';', $audience->subscribers);
 
-                    if (array_search($user_id, $subscribers) !==
-                        false) $subscribed = true;
+                    if (array_search((string)$user_id, $subscribers) !==
+                        false) return;
 
                 }
 
-                if ($subscribed) {
+                ob_start();
 
 ?>
-<button type="button" class="<?= htmlspecialchars($atts['class']) ?>" style="<?= htmlspecialchars($atts['style']) ?>" disabled="true"><?= $content[1] ?></button>
+<button type="button" id="<?= htmlspecialchars($atts['id']) ?>-user-authorized" class="<?= htmlspecialchars($atts['class']) ?>" style="<?= htmlspecialchars($atts['style']) ?>" onclick="SubsbuClient.subscribe('<?= htmlspecialchars($atts['id']) ?>-user-authorized', <?= $post->ID ?>, <?= $user_id ?>, '<?= $content[1] ?>');"><?= $content[0] ?></button>
 <?php
 
-                } else {
-
-?>
-<form action="" method="post" id="subsbuForm">
-<?php wp_nonce_field('subsbu-subscribe', 'subsbu-subscribe-wpnp') ?>
-</form>
-<button type="button" class="<?= htmlspecialchars($atts['class']) ?>" style="<?= htmlspecialchars($atts['style']) ?>" onclick="SubsbuClient.subscribe(<?= $user_id ?>);"><?= $content[0] ?></button>
-<?php
-
-                }
+                return ob_get_clean();
 
             }
-
-            return ob_get_clean();
 
         });
 
@@ -148,7 +152,7 @@ final class Main extends EntryPoint
                 'subsbu-client',
                 $this->url.SUBSBU_CONFIG['assets']['js'].'subsbu-client.js',
                 [],
-                '0.0.1',
+                '0.0.2',
                 true
             );
 

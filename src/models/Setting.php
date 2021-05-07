@@ -11,7 +11,7 @@ use Magnate\Tables\ActiveRecord;
  * Settings model
  * @since 0.0.4
  */
-class Settings extends ActiveRecord
+class Setting extends ActiveRecord
 {
 
     /**
