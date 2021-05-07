@@ -6,7 +6,7 @@
 namespace Subsbu;
 
 use Magnate\EntryPoint;
-use Magnate\Exceptions\ActiveRecordException;
+use Magnate\Exceptions\ActiveRecordCollectionException;
 use Subsbu\Tables\AudienceTable;
 use Subsbu\Tables\SettingsTable;
 use Subsbu\Models\Audience;
@@ -111,7 +111,7 @@ final class Main extends EntryPoint
                 ob_start();
 
 ?>
-<button type="button" id="<?= htmlspecialchars($atts['id']) ?>-user-authorized" class="<?= htmlspecialchars($atts['class']) ?>" style="<?= htmlspecialchars($atts['style']) ?>" onclick="SubsbuClient.subscribe('<?= htmlspecialchars($atts['id']) ?>-user-authorized', <?= $post->ID ?>, <?= $user_id ?>, '<?= $content[1] ?>', '<?= wp_create_nonce('subsbu-subscribe') ?>');"><?= $content[0] ?></button>
+<button type="button" id="<?= htmlspecialchars($atts['id']) ?>-user-authorized" class="<?= htmlspecialchars($atts['class']) ?>" style="<?= htmlspecialchars($atts['style']) ?>" onclick="SubsbuClient.subscribe('<?= htmlspecialchars($atts['id']) ?>-user-authorized', <?= $post->ID ?>, <?= $user_id ?>, '<?= $content[1] ?>', '<?= md5('subsbu-subscribe-'.$user_id) ?>');"><?= $content[0] ?></button>
 <?php
 
                 return ob_get_clean();
@@ -139,7 +139,7 @@ final class Main extends EntryPoint
                 'subsbu-client',
                 $this->url.SUBSBU_CONFIG['assets']['js'].'subsbu-client.js',
                 [],
-                '0.0.2',
+                '0.1.2',
                 true
             );
 
@@ -216,7 +216,7 @@ final class Main extends EntryPoint
 
                                 }
 
-                            } catch (ActiveRecordException $e) {
+                            } catch (ActiveRecordCollectionException $e) {
 
                                 if ($e->getCode() === -9) {
 
@@ -248,10 +248,8 @@ final class Main extends EntryPoint
 
                         require_once ABSPATH.WPINC.'/pluggable.php';
 
-                        return wp_verify_nonce(
-                            $request->get_param('subsbu-client-nonce'),
-                            'subsbu-subscribe'
-                        ) !== false;
+                        return $request->get_param('subsbu-client-key') ===
+                            md5('subsbu-subscribe-'.$request->get_param('subsbu-client-user'));
 
                     }
                 ]
