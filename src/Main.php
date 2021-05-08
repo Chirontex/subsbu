@@ -332,20 +332,27 @@ final class Main extends EntryPoint
             "SELECT t1.post_id,
                     t.post_title,
                     t1.meta_value AS start_time,
-                    t2.meta_value AS link
+                    t2.meta_value AS link,
+                    t3.meta_value AS timezone
                 FROM `".$this->wpdb->prefix."posts` AS t
                 LEFT JOIN `".$this->wpdb->prefix."postmeta` AS t1
                 ON t.ID = t1.post_id
                 LEFT JOIN `".$this->wpdb->prefix."postmeta` AS t2
                 ON t.ID = t2.post_id
+                LEFT JOIN `".$this->wpdb->prefix."postmeta` AS t3
+                ON t.ID = t3.post_id
                 WHERE t.post_type = 'ajde_events'
                 AND t1.meta_key = 'evcal_srow'
                 AND t1.meta_value > ".((time() + $this->settings['mail_time'] * 60) - 1)."
-                AND t2.meta_key = 'evcal_exlink'",
+                AND t2.meta_key = 'evcal_exlink'
+                AND t3.meta_key = '_evo_tz'",
             ARRAY_A
         );
 
         foreach ($events as $event) {
+
+            $timezone = empty($event['timezone']) ?
+                'Europe/Moscow' : $event['timezone'];
 
             if (wp_next_scheduled(
                 'subsbu-mailing-event-'.$event['post_id']
@@ -355,7 +362,7 @@ final class Main extends EntryPoint
 
                 $event_time = date("Y-m-d H:i:s", (int)$event['start_time']);
 
-                date_default_timezone_set('Europe/Moscow');
+                date_default_timezone_set($timezone);
 
                 $event_time = strtotime($event_time);
 
