@@ -31,7 +31,7 @@ class SettingsTable extends Migration
             ])
             ->entry([
                 'key' => 'mail_subject',
-                'value' => 'Осталось !%mail_time%! до начала !%event_name%!'
+                'value' => 'Осталось !%mail_time%! минут до начала !%event_name%!'
             ]);
 
             ob_start();

@@ -25,6 +25,7 @@ class AudienceTable extends Migration
                 SUBSBU_CONFIG['db']['tables']['audience'])
             ->field('post_id', 'BIGINT(20) UNSIGNED NOT NULL')
             ->field('subscribers', 'LONGTEXT')
+            ->field('mailed', 'VARCHAR(20) NOT NULL')
             ->index('post_id', 'UNIQUE INDEX');
         
         return $this;

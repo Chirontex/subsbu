@@ -64,7 +64,8 @@ final class Main extends EntryPoint
             ->getSettings()
             ->restApiInit()
             ->scriptAdd()
-            ->buttonShortcodeInit();
+            ->buttonShortcodeInit()
+            ->cronInit();
         
         return $this;
 
@@ -277,6 +278,7 @@ final class Main extends EntryPoint
 
                                     $audience->post_id = $event;
                                     $audience->subscribers = (string)$user_id;
+                                    $audience->mailed = 'false';
                                     $audience->save();
 
                                 } else return [
@@ -324,7 +326,7 @@ final class Main extends EntryPoint
     protected function cronInit() : self
     {
 
-        ini_set('date.timezone', '');
+        date_default_timezone_set('UTC');
 
         $events = $this->wpdb->get_results(
             "SELECT t1.post_id,
@@ -338,19 +340,27 @@ final class Main extends EntryPoint
                 ON t.ID = t2.post_id
                 WHERE t.post_type = 'ajde_events'
                 AND t1.meta_key = 'evcal_srow'
-                AND t1.meta_value > ".time()."
+                AND t1.meta_value > ".((time() + $this->settings['mail_time'] * 60) - 1)."
                 AND t2.meta_key = 'evcal_exlink'",
             ARRAY_A
         );
 
         foreach ($events as $event) {
 
-            if (!wp_next_scheduled(
+            if (wp_next_scheduled(
                 'subsbu-mailing-event-'.$event['post_id']
-            )) {
+            ) === false) {
+
+                date_default_timezone_set('UTC');
+
+                $event_time = date("Y-m-d H:i:s", (int)$event['start_time']);
+
+                date_default_timezone_set('Europe/Moscow');
+
+                $event_time = strtotime($event_time);
 
                 wp_schedule_single_event(
-                    (int)$event['time_start'] -
+                    $event_time -
                         ((int)$this->settings['mail_time'] * 60),
                     'subsbu-mailing-event-'.$event['post_id'],
                     [
@@ -374,6 +384,10 @@ final class Main extends EntryPoint
                                     'post_id' => [
                                         'condition' => '= %d',
                                         'value' => (int)$event_id
+                                    ],
+                                    'mailed' => [
+                                        'condition' => '!= %s',
+                                        'value' => 'true'
                                     ]
                                 ]
                             ]
@@ -455,6 +469,9 @@ final class Main extends EntryPoint
                         );
 
                     }
+
+                    $audience->mailed = 'true';
+                    $audience->save();
 
                 }, 10, 3);
 
