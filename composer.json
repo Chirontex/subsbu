@@ -1,5 +1,5 @@
 {
     "require": {
-        "magnate/magnate": "^0.8.9"
+        "magnate/magnate": "^0.9.1"
     }
 }
