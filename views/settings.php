@@ -10,6 +10,23 @@ if (!defined('ABSPATH')) die;
     <h1 class="h3 text-center my-5">Subsbu: настройки</h1>
     <div class="main-column">
         <h4 class="text-center mb-3">Настройка уведомления по e-mail</h4>
+        <ul class="list-group mb-3">
+            <li class="list-group-item list-group-item-light">
+                !%site_url%! — адрес сайта
+            </li>
+            <li class="list-group-item list-group-item-light">
+                !%site_name%! — название сайта
+            </li>
+            <li class="list-group-item list-group-item-light">
+                !%mail_time%! — время до начала мероприятия (задаётся в настройках ниже)
+            </li>
+            <li class="list-group-item list-group-item-light">
+                !%event_name%! — название мероприятия
+            </li>
+            <li class="list-group-item list-group-item-light">
+                !%event_url%! — ссылка на страницу мероприятия
+            </li>
+        </ul>
         <form action="" method="post">
             <?php wp_nonce_field('subsbuSettingsNonce-wpnp', 'subsbuSettingsNonce') ?>
             <div class="mb-3">

@@ -30,6 +30,8 @@ final class SettingsPage extends AdminPage
     protected function init() : self
     {
 
+        if (isset($_POST['subsbuSettingsNonce'])) $this->settingsFormSave();
+
         $this->mailFiltersInit();
         
         return $this;
@@ -122,6 +124,86 @@ final class SettingsPage extends AdminPage
             }
 
         });
+
+        return $this;
+
+    }
+
+    /**
+     * Saving settings data.
+     * @since 0.1.6
+     * 
+     * @return $this
+     */
+    protected function settingsFormSave() : self
+    {
+
+        require_once ABSPATH.WPINC.'/pluggable.php';
+
+        if (wp_verify_nonce(
+            $_POST['subsbuSettingsNonce'],
+            'subsbuSettingsNonce-wpnp'
+        ) === false) {
+            
+            $this->notice(
+                'error',
+                $this->fail_nonce_notice
+            );
+
+            return $this;
+    
+        }
+
+        foreach ([
+                'subsbuMailTime' => 'mail_time',
+                'subsbuMailSubject' => 'mail_subject',
+                'subsbuMailText' => 'mail_text'
+            ] as $name => $key) {
+
+            if (!isset($_POST[$name])) {
+
+                $this->notice(
+                    'error',
+                    'Некоторые необходимые поля не были заполнены.'
+                );
+
+                return $this;
+
+            }
+
+            try {
+
+                $setting = Setting::where(
+                    [
+                        [
+                            'key' => [
+                                'condition' => '= %s',
+                                'value' => $key
+                            ]
+                        ]
+                    ]
+                )->first();
+
+            } catch (ActiveRecordCollectionException $e) {
+
+                if ($e->getCode() === -9) {
+
+                    $setting = new Setting;
+                    $setting->key = $key;
+
+                } else throw $e;
+
+            }
+
+            $setting->value = (string)$_POST[$name];
+            $setting->save();
+
+        }
+
+        $this->notice(
+            'success',
+            'Настройки сохранены!'
+        );
 
         return $this;
 
