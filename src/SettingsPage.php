@@ -125,6 +125,58 @@ final class SettingsPage extends AdminPage
 
         });
 
+        add_filter('subsbu-mail-sender-name', function() {
+
+            try {
+
+                $setting = Setting::where(
+                    [
+                        [
+                            'key' => [
+                                'condition' => '= %s',
+                                'value' => 'sender_name'
+                            ]
+                        ]
+                    ]
+                )->first();
+
+                return $setting->value;
+
+            } catch (ActiveRecordCollectionException $e) {
+
+                if ($e->getCode() === -9) return '';
+                else throw $e;
+
+            }
+
+        });
+
+        add_filter('subsbu-mail-sender-email', function() {
+
+            try {
+
+                $setting = Setting::where(
+                    [
+                        [
+                            'key' => [
+                                'condition' => '= %s',
+                                'value' => 'sender_email'
+                            ]
+                        ]
+                    ]
+                )->first();
+
+                return $setting->value;
+
+            } catch (ActiveRecordCollectionException $e) {
+
+                if ($e->getCode() === -9) return '';
+                else throw $e;
+
+            }
+
+        });
+
         return $this;
 
     }
@@ -157,7 +209,9 @@ final class SettingsPage extends AdminPage
         foreach ([
                 'subsbuMailTime' => 'mail_time',
                 'subsbuMailSubject' => 'mail_subject',
-                'subsbuMailText' => 'mail_text'
+                'subsbuMailText' => 'mail_text',
+                'subsbuMailSenderName' => 'sender_name',
+                'subsbuMailSenderEmail' => 'sender_email'
             ] as $name => $key) {
 
             if (!isset($_POST[$name])) {

@@ -24,6 +24,13 @@ final class Main extends EntryPoint
 {
 
     /**
+     * @var array $settings
+     * All settings.
+     * @since 0.1.8
+     */
+    protected $settings = [];
+
+    /**
      * @since 0.0.2
      */
     protected function init() : self
@@ -54,10 +61,32 @@ final class Main extends EntryPoint
         );
 
         $this
+            ->getSettings()
             ->restApiInit()
             ->scriptAdd()
             ->buttonShortcodeInit();
         
+        return $this;
+
+    }
+
+    /**
+     * Get settings to object property.
+     * @since 0.1.8
+     * 
+     * @return $this
+     */
+    protected function getSettings() : self
+    {
+
+        $settings = Setting::where([])->all();
+
+        foreach ($settings as $setting) {
+
+            $this->settings[$setting->key] = $setting->value;
+
+        }
+
         return $this;
 
     }
@@ -314,30 +343,120 @@ final class Main extends EntryPoint
             ARRAY_A
         );
 
-        if (!empty($events)) {
+        foreach ($events as $event) {
 
-            $mail_time = Setting::where(
-                [
+            if (!wp_next_scheduled(
+                'subsbu-mailing-event-'.$event['post_id']
+            )) {
+
+                wp_schedule_single_event(
+                    (int)$event['time_start'] -
+                        ((int)$this->settings['mail_time'] * 60),
+                    'subsbu-mailing-event-'.$event['post_id'],
                     [
-                        'key' => [
-                            'condition' => '= %s',
-                            'value' => 'mail_time'
-                        ]
+                        (int)$event['post_id'],
+                        $event['post_title'],
+                        $event['link']
                     ]
-                ]
-            )->first();
-
-            foreach ($events as $event) {
-
-                if (!wp_next_scheduled(
-                    'subsbu-mailing-event-'.$event['post_id']
-                )) {
-
-                    //
-
-                }
+                );
 
             }
+
+            add_action(
+                'subsbu-mailing-event-'.$event['post_id'],
+                function($event_id, $event_name, $event_url) {
+
+                    try {
+
+                        $audience = Audience::where(
+                            [
+                                [
+                                    'post_id' => [
+                                        'condition' => '= %d',
+                                        'value' => (int)$event_id
+                                    ]
+                                ]
+                            ]
+                        )->first();
+
+                    } catch (ActiveRecordCollectionException $e) {
+
+                        if ($e->getCode() === -9) return;
+                        else throw $e;
+
+                    }
+
+                    $subscribers = explode(';', $audience->subscribers);
+
+                    if (empty($subscribers)) return;
+
+                    $where = '';
+
+                    foreach ($subscribers as $user_id) {
+
+                        $where .= empty($where) ? " WHERE" : " OR";
+                        $where .= " t.ID = ".$user_id;
+
+                    }
+
+                    $emails = $this->wpdb->get_results(
+                        "SELECT t.user_email
+                            FROM `".$this->wpdb->prefix."users` AS t".$where,
+                        ARRAY_A
+                    );
+
+                    if (empty($emails)) return;
+
+                    $placeholders = [
+                        '!%site_url%!',
+                        '!%site_name%!',
+                        '!%mail_time%!',
+                        '!%event_name%!',
+                        '!%event_url%!'
+                    ];
+
+                    $ph_values = [
+                        site_url(),
+                        get_bloginfo('name'),
+                        $this->settings['mail_time'],
+                        $event_name,
+                        $event_url
+                    ];
+
+                    $subject = str_replace(
+                        $placeholders,
+                        $ph_values,
+                        $this->settings['mail_subject']
+                    );
+
+                    $text = str_replace(
+                        $placeholders,
+                        $ph_values,
+                        $this->settings['mail_text']
+                    );
+
+                    $sender_name = str_replace(
+                        $placeholders,
+                        $ph_values,
+                        $this->settings['sender_name']
+                    );
+
+                    foreach ($emails as $row) {
+
+                        wp_mail(
+                            $row['user_email'],
+                            $subject,
+                            $text,
+                            [
+                                'Content-type: text/html; charset=utf-8',
+                                'From: '.$sender_name.
+                                    ' <'.$this->settings['sender_email'].'>'
+                            ]
+                        );
+
+                    }
+
+                }, 10, 3);
 
         }
 

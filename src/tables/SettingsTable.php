@@ -42,10 +42,19 @@ class SettingsTable extends Migration
 <p>С уважением, администрация !%site_name%!</p>
 <?php
 
-            $this->entry([
-                'key' => 'mail_text',
-                'value' => ob_get_clean()
-            ]);
+            $this
+                ->entry([
+                    'key' => 'mail_text',
+                    'value' => ob_get_clean()
+            ])
+                ->entry([
+                    'key' => 'sender_name',
+                    'value' => '!%site_name%!'
+                ])
+                ->entry([
+                    'key' => 'sender_email',
+                    'value' => 'noreply@'.$_SERVER['HTTP_HOST']
+                ]);
 
         return $this;
         
