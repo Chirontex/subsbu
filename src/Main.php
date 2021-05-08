@@ -12,6 +12,7 @@ use Magnate\Exceptions\ActiveRecordCollectionException;
 use Subsbu\Tables\AudienceTable;
 use Subsbu\Tables\SettingsTable;
 use Subsbu\Models\Audience;
+use Subsbu\Models\Setting;
 use WP_REST_Request;
 
 /**
@@ -280,6 +281,65 @@ final class Main extends EntryPoint
             );
 
         });
+
+        return $this;
+
+    }
+
+    /**
+     * Initialize cron mailing tasks.
+     * @since 0.1.7
+     * 
+     * @return $this
+     */
+    protected function cronInit() : self
+    {
+
+        ini_set('date.timezone', '');
+
+        $events = $this->wpdb->get_results(
+            "SELECT t1.post_id,
+                    t.post_title,
+                    t1.meta_value AS start_time,
+                    t2.meta_value AS link
+                FROM `".$this->wpdb->prefix."posts` AS t
+                LEFT JOIN `".$this->wpdb->prefix."postmeta` AS t1
+                ON t.ID = t1.post_id
+                LEFT JOIN `".$this->wpdb->prefix."postmeta` AS t2
+                ON t.ID = t2.post_id
+                WHERE t.post_type = 'ajde_events'
+                AND t1.meta_key = 'evcal_srow'
+                AND t1.meta_value > ".time()."
+                AND t2.meta_key = 'evcal_exlink'",
+            ARRAY_A
+        );
+
+        if (!empty($events)) {
+
+            $mail_time = Setting::where(
+                [
+                    [
+                        'key' => [
+                            'condition' => '= %s',
+                            'value' => 'mail_time'
+                        ]
+                    ]
+                ]
+            )->first();
+
+            foreach ($events as $event) {
+
+                if (!wp_next_scheduled(
+                    'subsbu-mailing-event-'.$event['post_id']
+                )) {
+
+                    //
+
+                }
+
+            }
+
+        }
 
         return $this;
 

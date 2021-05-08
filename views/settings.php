@@ -2,11 +2,12 @@
 /**
  * @package Subsbu
  * @author Dmitry Shumilin (chirontex@yandex.ru)
+ * @since 0.1.3
  */
 if (!defined('ABSPATH')) die;
 
 ?>
-<div class="container-fluid">
+<div class="container">
     <h1 class="h3 text-center my-5">Subsbu: настройки</h1>
     <div class="main-column">
         <h4 class="text-center mb-3">Настройка уведомления по e-mail</h4>

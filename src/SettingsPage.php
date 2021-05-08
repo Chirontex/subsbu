@@ -195,7 +195,7 @@ final class SettingsPage extends AdminPage
 
             }
 
-            $setting->value = (string)$_POST[$name];
+            $setting->value = $_POST[$name];
             $setting->save();
 
         }
