@@ -434,7 +434,7 @@ final class Main extends EntryPoint
                         get_bloginfo('name'),
                         $this->settings['mail_time'],
                         $event_name,
-                        $event_url
+                        rawurldecode($event_url)
                     ];
 
                     $subject = str_replace(
@@ -469,8 +469,8 @@ final class Main extends EntryPoint
                         );
 
                     }
-
-                    $audience->mailed = 'true';
+                    
+                    $audience->refresh()->mailed = 'true';
                     $audience->save();
 
                 }, 10, 3);
