@@ -134,7 +134,7 @@ final class Main extends EntryPoint
                 ob_start();
 
 ?>
-<button type="button" id="<?= htmlspecialchars($atts['id']) ?>-user-authorized" class="<?= htmlspecialchars($atts['class']) ?>" style="<?= htmlspecialchars($atts['style']) ?>" onclick="SubsbuClient.subscribe('<?= htmlspecialchars($atts['id']) ?>-user-authorized', <?= $post->ID ?>, <?= $user_id ?>, '<?= $content[1] ?>', '<?= md5('subsbu-subscribe-'.$user_id) ?>');"><?= $content[0] ?></button>
+<button type="button" id="<?= htmlspecialchars($atts['id']) ?>-user-authorized" class="<?= htmlspecialchars($atts['class']) ?>" style="<?= htmlspecialchars($atts['style']) ?>" onclick="SubsbuClient.subscribe('<?= htmlspecialchars($atts['id']) ?>-user-authorized', <?= $post->ID ?>, <?= $user_id ?>, '<?= $content[1] ?>', '<?= md5('subsbu-subscribe-'.$atts['event'].'-'.$user_id) ?>');"><?= $content[0] ?></button>
 <?php
 
                 return ob_get_clean();
@@ -272,7 +272,8 @@ final class Main extends EntryPoint
                         require_once ABSPATH.WPINC.'/pluggable.php';
 
                         return $request->get_param('subsbu-client-key') ===
-                            md5('subsbu-subscribe-'.$request->get_param('subsbu-client-user'));
+                            md5('subsbu-subscribe-'.$request->get_param('subsbu-client-event').
+                                '-'.$request->get_param('subsbu-client-user'));
 
                     }
                 ]

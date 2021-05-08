@@ -6,6 +6,8 @@
 namespace Subsbu;
 
 use Magnate\AdminPage;
+use Magnate\Exceptions\ActiveRecordCollectionException;
+use Subsbu\Models\Setting;
 
 /**
  * @final
@@ -15,6 +17,21 @@ use Magnate\AdminPage;
 final class SettingsPage extends AdminPage
 {
 
+    /**
+     * @var string $fail_nonce_notice
+     * Typical nonce checking failure notice text.
+     * @since 0.1.4
+     */
+    protected $fail_nonce_notice = 'Произошла ошибка отправки формы. Попробуйте ещё раз.';
 
+    /**
+     * @since 0.1.4
+     */
+    protected function init(): self
+    {
+        
+        return $this;
+
+    }
 
 }
