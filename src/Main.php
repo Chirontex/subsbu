@@ -302,8 +302,6 @@ class Main extends EntryPoint
                     },
                     'permission_callback' => function(WP_REST_Request $request) {
 
-                        require_once ABSPATH.WPINC.'/pluggable.php';
-
                         return $request->get_param('subsbu-client-key') ===
                             md5('subsbu-subscribe-'.$request->get_param('subsbu-client-event').
                                 '-'.$request->get_param('subsbu-client-user'));
