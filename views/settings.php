@@ -8,9 +8,8 @@ if (!defined('ABSPATH')) die;
 
 ?>
 <div class="container">
-    <h1 class="h3 text-center my-5">Subsbu: настройки</h1>
+    <h1 class="h3 text-center my-5">Настройки e-mail-уведомлений о мероприятиях</h1>
     <div class="main-column">
-        <h4 class="text-center mb-3">Настройка уведомления по e-mail</h4>
         <ul class="list-group mb-3">
             <li class="list-group-item list-group-item-light">
                 !%site_url%! — адрес сайта

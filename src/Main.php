@@ -16,11 +16,10 @@ use Subsbu\Models\Setting;
 use WP_REST_Request;
 
 /**
- * @final
  * Main EP class.
  * @since 0.0.2
  */
-final class Main extends EntryPoint
+class Main extends EntryPoint
 {
 
     /**
@@ -44,9 +43,11 @@ final class Main extends EntryPoint
             (new AdminPageInjector(
                 'subsbu-settings',
                 $this->path.SUBSBU_CONFIG['views'].'settings.php',
-                'Subsbu: настройки',
-                'Subsbu',
-                8
+                'Настройки e-mail-уведомлений о мероприятиях',
+                'Настройки e-mail-уведомлений',
+                8,
+                '',
+                $this->url.SUBSBU_CONFIG['assets']['icons'].'mail.svg'
             ))->addStyle(
                 'bootstrap',
                 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css',

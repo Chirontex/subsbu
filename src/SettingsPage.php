@@ -10,11 +10,10 @@ use Magnate\Exceptions\ActiveRecordCollectionException;
 use Subsbu\Models\Setting;
 
 /**
- * @final
  * Settings page entry point.
  * @since 0.1.2
  */
-final class SettingsPage extends AdminPage
+class SettingsPage extends AdminPage
 {
 
     /**
