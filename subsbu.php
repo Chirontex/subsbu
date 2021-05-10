@@ -3,35 +3,19 @@
  * Plugin Name: Subsbu
  * Plugin URI: https://github.com/chirontex/subsbu
  * Description: Плагин, позволяющий пользователям записываться на мероприятия, созданные в плагине myEventON.
- * Version: 0.2.3
+ * Version: 1.0.0
  * Author: Dmitry Shumilin
  * Author URI: mailto://chirontex@yandex.ru
  * 
  * @package Subsbu
  * @author Dmitry Shumilin (chirontex@yandex.ru)
- * @since 0.2.3
+ * @since 1.0.0
 */
 use Magnate\Injectors\EntryPointInjector;
 use Subsbu\Main;
 
 require_once __DIR__.'/vendor/autoload.php';
 require_once __DIR__.'/subsbu-autoload.php';
-
-define('SUBSBU_CONFIG', [
-    'db' => [
-        'prefix' => 'subsbu_',
-        'tables' => [
-            'audience' => 'audience',
-            'settings' => 'settings'
-        ]
-    ],
-    'assets' => [
-        'js' => 'assets/js/',
-        'css' => 'assets/css/',
-        'icons' => 'assets/icons/'
-    ],
-    'views' => 'views/'
-]);
 
 new Main(
     new EntryPointInjector(

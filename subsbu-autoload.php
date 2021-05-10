@@ -29,3 +29,19 @@ spl_autoload_register(function($classname) {
     }
 
 });
+
+define('SUBSBU_CONFIG', [
+    'db' => [
+        'prefix' => 'subsbu_',
+        'tables' => [
+            'audience' => 'audience',
+            'settings' => 'settings'
+        ]
+    ],
+    'assets' => [
+        'js' => 'assets/js/',
+        'css' => 'assets/css/',
+        'icons' => 'assets/icons/'
+    ],
+    'views' => 'views/'
+]);
