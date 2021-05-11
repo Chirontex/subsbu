@@ -110,7 +110,8 @@ class Main extends EntryPoint
                 'class' => '',
                 'style' => '',
                 'donor' => '',
-                'recipient' => ''
+                'recipient' => '',
+                'onclick' => ''
             ], $atts);
             
             if (empty($content)) $content = 'Зарегистрироваться|||Вы зарегистрированы!';
@@ -121,10 +122,14 @@ class Main extends EntryPoint
 
             if (empty($user_id)) {
 
+                $onclick = empty($atts['onclick']) ?
+                    "SubsbuClient.flip('".htmlspecialchars($atts['donor'])."', '".htmlspecialchars($atts['recipient'])."');" :
+                    htmlspecialchars($atts['onclick']);
+
                 ob_start();
 
 ?>
-<button type="button" id="<?= htmlspecialchars($atts['id']) ?>" class="<?= htmlspecialchars($atts['class']) ?>" style="<?= htmlspecialchars($atts['style']) ?>" onclick="SubsbuClient.flip('<?= htmlspecialchars($atts['donor']) ?>', '<?= htmlspecialchars($atts['recipient']) ?>');"><?= $content[0] ?></button>
+<button type="button" id="<?= htmlspecialchars($atts['id']) ?>" class="<?= htmlspecialchars($atts['class']) ?>" style="<?= htmlspecialchars($atts['style']) ?>" onclick="<?= $onclick ?>"><?= $content[0] ?></button>
 <?php
 
                 return ob_get_clean();
