@@ -196,7 +196,7 @@ class Main extends EntryPoint
                 'subsbu-client',
                 $this->url.SUBSBU_CONFIG['assets']['js'].'subsbu-client.js',
                 [],
-                '0.1.5',
+                '0.1.8',
                 true
             );
 

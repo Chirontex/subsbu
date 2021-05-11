@@ -53,6 +53,9 @@ const SubsbuClient = {
 
     },
     flip: (donorId, recipientId) => {
+        if (donorId == '' ||
+            recipientId == '') return;
+
         SubsbuClient.fadeAppear(
             recipientId,
             100,
@@ -69,7 +72,18 @@ const SubsbuClient = {
         );
     },
     flop: (donorId, recipientId) => {
+        SubsbuClient.fadeAppear(
+            recipientId,
+            100,
+            -1,
+            (recipientId, donorId) => {
+                document.getElementById(recipientId).innerHTML = SubsbuClient.buffer;
 
+                SubsbuClient.buffer = null;
+
+                SubsbuClient.fadeAppear(recipientId, 0);
+            }
+        );
     },
     fadeAppear: (recipientId, opacity, mode = 1, callback = undefined, donorId = undefined) => {
         document.getElementById(recipientId).setAttribute('style', 'opacity: '+opacity+'%;');
@@ -84,7 +98,7 @@ const SubsbuClient = {
         }
         else setTimeout(
             SubsbuClient.fadeAppear,
-            5,
+            1,
             recipientId,
             (opacity + mode),
             mode,
