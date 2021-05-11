@@ -1,4 +1,5 @@
 const SubsbuClient = {
+    buffer: null,
     subscribe: async (buttonId, event, user, success_text, key) => {
         const button = document.getElementById(buttonId);
 
@@ -34,7 +35,7 @@ const SubsbuClient = {
             {
                 button.innerHTML = 'Ошибка запроса';
 
-                console.warn(
+                console.error(
                     'SubsbuClient.subscribe(): '+
                         answer.code+', "'+answer.message+'"'
                 );
@@ -50,5 +51,44 @@ const SubsbuClient = {
             console.error('SubsbuClient.subscribe(): connection error.');
         }
 
+    },
+    flip: (donorId, recipientId) => {
+        SubsbuClient.fadeAppear(
+            recipientId,
+            100,
+            -1,
+            (recipientId, donorId) => {
+                const recipient = document.getElementById(recipientId);
+
+                SubsbuClient.buffer = recipient.innerHTML;
+
+                recipient.innerHTML = document.getElementById(donorId).innerHTML;
+
+                SubsbuClient.fadeAppear(recipientId, 0);
+            }, donorId
+        );
+    },
+    flop: (donorId, recipientId) => {
+
+    },
+    fadeAppear: (recipientId, opacity, mode = 1, callback = undefined, donorId = undefined) => {
+        document.getElementById(recipientId).setAttribute('style', 'opacity: '+opacity+'%;');
+
+        const goal = mode >= 0 ? 100 : 0;
+
+        if (mode == 0) mode = -1;
+
+        if (opacity == goal)
+        {
+            if (callback != undefined) callback(recipientId, donorId);
+        }
+        else setTimeout(
+            SubsbuClient.fadeAppear,
+            5,
+            recipientId,
+            (opacity + mode),
+            mode,
+            callback, donorId);
     }
+
 };

@@ -108,7 +108,9 @@ class Main extends EntryPoint
                 'id' => '',
                 'event' => '',
                 'class' => '',
-                'style' => ''
+                'style' => '',
+                'donor' => '',
+                'recipient' => ''
             ], $atts);
             
             if (empty($content)) $content = 'Зарегистрироваться|||Вы зарегистрированы!';
@@ -122,7 +124,7 @@ class Main extends EntryPoint
                 ob_start();
 
 ?>
-<button type="button" id="<?= htmlspecialchars($atts['id']) ?>" class="<?= htmlspecialchars($atts['class']) ?>" style="<?= htmlspecialchars($atts['style']) ?>"><?= $content[0] ?></button>
+<button type="button" id="<?= htmlspecialchars($atts['id']) ?>" class="<?= htmlspecialchars($atts['class']) ?>" style="<?= htmlspecialchars($atts['style']) ?>" onclick="SubsbuClient.flip('<?= htmlspecialchars($atts['donor']) ?>', '<?= htmlspecialchars($atts['recipient']) ?>');"><?= $content[0] ?></button>
 <?php
 
                 return ob_get_clean();
@@ -194,7 +196,7 @@ class Main extends EntryPoint
                 'subsbu-client',
                 $this->url.SUBSBU_CONFIG['assets']['js'].'subsbu-client.js',
                 [],
-                '0.1.2',
+                '0.1.5',
                 true
             );
 
