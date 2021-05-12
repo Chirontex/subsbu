@@ -205,6 +205,13 @@ class Main extends EntryPoint
                 true
             );
 
+            wp_enqueue_style(
+                'subsbu-client',
+                $this->url.SUBSBU_CONFIG['assets']['css'].'subsbu-client.css',
+                [],
+                '0.0.1'
+            );
+
         });
 
         return $this;

@@ -1,0 +1,11 @@
+@media (max-width: 759px) {
+    .evo-page-content {
+        margin-top: 5rem;
+    }
+}
+
+@media (min-width: 760px) {
+    .evo-page-content {
+        margin-top: 8rem;
+    }
+}
