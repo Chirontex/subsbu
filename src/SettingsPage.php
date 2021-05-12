@@ -176,6 +176,58 @@ class SettingsPage extends AdminPage
 
         });
 
+        add_filter('subsbu-notice-subject', function() {
+
+            try {
+
+                $setting = Setting::where(
+                    [
+                        [
+                            'key' => [
+                                'condition' => '= %s',
+                                'value' => 'notice_subject'
+                            ]
+                        ]
+                    ]
+                )->first();
+
+                return $setting->value;
+
+            } catch (ActiveRecordCollectionException $e) {
+
+                if ($e->getCode() === -9) return '';
+                else throw $e;
+
+            }
+
+        });
+
+        add_filter('subsbu-notice-text', function() {
+
+            try {
+
+                $setting = Setting::where(
+                    [
+                        [
+                            'key' => [
+                                'condition' => '= %s',
+                                'value' => 'notice_text'
+                            ]
+                        ]
+                    ]
+                )->first();
+
+                return $setting->value;
+
+            } catch (ActiveRecordCollectionException $e) {
+
+                if ($e->getCode() === -9) return '';
+                else throw $e;
+
+            }
+
+        });
+
         return $this;
 
     }
@@ -210,7 +262,9 @@ class SettingsPage extends AdminPage
                 'subsbuMailSubject' => 'mail_subject',
                 'subsbuMailText' => 'mail_text',
                 'subsbuMailSenderName' => 'sender_name',
-                'subsbuMailSenderEmail' => 'sender_email'
+                'subsbuMailSenderEmail' => 'sender_email',
+                'subsbuNoticeSubject' => 'notice_subject',
+                'subsbuNoticeText' => 'notice_text'
             ] as $name => $key) {
 
             if (!isset($_POST[$name])) {

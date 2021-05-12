@@ -38,16 +38,24 @@ if (!defined('ABSPATH')) die;
                 <input type="email" name="subsbuMailSenderEmail" id="subsbuMailSenderEmail" class="form-control form-control-sm" placeholder="укажите тему письма" value="<?= htmlspecialchars(apply_filters('subsbu-mail-sender-email', '')) ?>" required="true">
             </div>
             <div class="mb-3">
-                <label for="subsbuMailTime" class="form-label">За сколько минут до начала должно приходить уведомление:</label>
+                <label for="subsbuMailTime" class="form-label">За сколько минут до начала должно приходить напоминание:</label>
                 <input type="number" name="subsbuMailTime" id="subsbuMailTime" class="form-control form-control-sm" placeholder="значение в минутах" value="<?= htmlspecialchars(apply_filters('subsbu-mail-time', '')) ?>" required="true">
             </div>
             <div class="mb-3">
-                <label for="subsbuMailSubject" class="form-label">Тема письма:</label>
+                <label for="subsbuMailSubject" class="form-label">Тема напоминания:</label>
                 <input type="text" name="subsbuMailSubject" id="subsbuMailSubject" class="form-control form-control-sm" placeholder="укажите тему письма" value="<?= htmlspecialchars(apply_filters('subsbu-mail-subject', '')) ?>" required="true">
             </div>
             <div class="mb-3">
-                <label for="subsbuMailText" class="form-label">Текст письма:</label>
+                <label for="subsbuMailText" class="form-label">Текст напоминания:</label>
                 <textarea name="subsbuMailText" id="subsbuMailText" class="form-control form-control-sm" cols="30" rows="10" placeholder="текст письма" required="true"><?= htmlspecialchars(apply_filters('subsbu-mail-text', '')) ?></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="subsbuNoticeSubject" class="form-label">Тема уведомления:</label>
+                <input type="text" name="subsbuNoticeSubject" id="subsbuNoticeSubject" class="form-control form-control-sm" placeholder="укажите тему письма" value="<?= htmlspecialchars(apply_filters('subsbu-notice-subject', '')) ?>" required="true">
+            </div>
+            <div class="mb-3">
+                <label for="subsbuNoticeText" class="form-label">Текст уведомления:</label>
+                <textarea name="subsbuNoticeText" id="subsbuNoticeText" cols="30" rows="10" class="form-control form-control-sm" placeholder="текст письма"><?= htmlspecialchars(apply_filters('subsbu-notice-text', '')) ?></textarea>
             </div>
             <div class="mb-3 text-center">
                 <button type="submit" class="button button-primary">Сохранить</button>
