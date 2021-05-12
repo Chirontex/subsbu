@@ -66,6 +66,7 @@ class Main extends EntryPoint
             ->restApiInit()
             ->scriptAdd()
             ->buttonShortcodeInit()
+            ->counterShortcodeInit()
             ->cronInit();
         
         return $this;
@@ -187,6 +188,63 @@ class Main extends EntryPoint
 <?php
 
                 return ob_get_clean();
+
+            }
+
+        });
+
+        return $this;
+
+    }
+
+    /**
+     * Initialize counter shortcode.
+     * @since 1.0.9
+     * 
+     * @return $this
+     */
+    protected function counterShortcodeInit() : self
+    {
+
+        add_shortcode('subsbu-counter', function($atts) {
+
+            $atts = shortcode_atts([
+                'event' => ''
+            ], $atts);
+
+            if (empty($atts['event'])) return;
+
+            $post_id = (int)$atts['event'];
+
+            try {
+
+                $audience = Audience::where(
+                    [
+                        [
+                            'post_id' => [
+                                'condition' => '= %d',
+                                'value' => $post_id
+                            ]
+                        ]
+                    ]
+                )->first();
+
+                $count = (string)count(explode(';', $audience->subscribers));
+
+                $last_digit = substr($count, -1);
+
+                $count .= ' человек';
+
+                if ($last_digit === '2' ||
+                    $last_digit === '3' ||
+                    $last_digit === '4') $count .= 'а';
+
+                return $count;
+
+            } catch (ActiveRecordCollectionException $e) {
+
+                if ($e->getCode() === -9) return '0 человек';
+                else throw $e;
 
             }
 
