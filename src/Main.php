@@ -209,7 +209,7 @@ class Main extends EntryPoint
                 'subsbu-client',
                 $this->url.SUBSBU_CONFIG['assets']['css'].'subsbu-client.css',
                 [],
-                '0.0.1'
+                '0.0.4'
             );
 
         });
