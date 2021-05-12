@@ -166,7 +166,17 @@ class Main extends EntryPoint
                     $subscribers = explode(';', $audience->subscribers);
 
                     if (array_search((string)$user_id, $subscribers) !==
-                        false) return;
+                        false) {
+
+                        ob_start();
+
+?>
+<button type="button" class="<?= htmlspecialchars($atts['class']) ?>" style="<?= htmlspecialchars($atts['style']) ?>" disabled="true"><?= $content[1] ?></button>
+<?php
+
+                        return ob_get_clean();
+
+                    }
 
                 }
 
@@ -302,6 +312,40 @@ class Main extends EntryPoint
                                 ];
 
                             }
+
+                            $event_name = $post->post_title;
+                            $event_url = $post->evcal_exlink;
+
+                            $subject = $this->replaceMailPlaceholders(
+                                $this->settings['notice_subject'],
+                                $event_name,
+                                $event_url
+                            );
+
+                            $text = $this->replaceMailPlaceholders(
+                                $this->settings['notice_text'],
+                                $event_name,
+                                $event_url
+                            );
+
+                            $sender_name = $this->replaceMailPlaceholders(
+                                $this->settings['sender_name'],
+                                $event_name,
+                                $event_url
+                            );
+
+                            $user = get_userdata($user_id);
+
+                            wp_mail(
+                                $user->user_email,
+                                $subject,
+                                $text,
+                                [
+                                    'Content-type: text/html; charset=utf-8',
+                                    'From: '.$sender_name.
+                                        ' <'.$this->settings['sender_email'].'>'
+                                ]
+                            );
 
                             return [
                                 'code' => 0,
@@ -441,38 +485,22 @@ class Main extends EntryPoint
 
                     if (empty($emails)) return;
 
-                    $placeholders = [
-                        '!%site_url%!',
-                        '!%site_name%!',
-                        '!%mail_time%!',
-                        '!%event_name%!',
-                        '!%event_url%!'
-                    ];
-
-                    $ph_values = [
-                        site_url(),
-                        get_bloginfo('name'),
-                        $this->settings['mail_time'],
+                    $subject = $this->replaceMailPlaceholders(
+                        $this->settings['mail_subject'],
                         $event_name,
-                        rawurldecode($event_url)
-                    ];
-
-                    $subject = str_replace(
-                        $placeholders,
-                        $ph_values,
-                        $this->settings['mail_subject']
+                        $event_url
                     );
 
-                    $text = str_replace(
-                        $placeholders,
-                        $ph_values,
-                        $this->settings['mail_text']
+                    $text = $this->replaceMailPlaceholders(
+                        $this->settings['mail_text'],
+                        $event_name,
+                        $event_url
                     );
 
-                    $sender_name = str_replace(
-                        $placeholders,
-                        $ph_values,
-                        $this->settings['sender_name']
+                    $sender_name = $this->replaceMailPlaceholders(
+                        $this->settings['sender_name'],
+                        $event_name,
+                        $event_url
                     );
 
                     foreach ($emails as $row) {
@@ -498,6 +526,48 @@ class Main extends EntryPoint
         }
 
         return $this;
+
+    }
+
+    /**
+     * Return string with replaced placeholders.
+     * @since 1.0.7
+     * 
+     * @param string $content
+     * String with placeholders.
+     * 
+     * @param string $event_name
+     * Event name.
+     * 
+     * @param string $event_url
+     * Event URL.
+     * 
+     * @return string
+     */
+    protected function replaceMailPlaceholders(string $content, string $event_name, string $event_url) : string
+    {
+
+        $placeholders = [
+            '!%site_url%!',
+            '!%site_name%!',
+            '!%mail_time%!',
+            '!%event_name%!',
+            '!%event_url%!'
+        ];
+
+        $ph_values = [
+            site_url(),
+            get_bloginfo('name'),
+            $this->settings['mail_time'],
+            $event_name,
+            rawurldecode($event_url)
+        ];
+
+        return str_replace(
+            $placeholders,
+            $ph_values,
+            $content
+        );
 
     }
 

@@ -54,7 +54,25 @@ class SettingsTable extends Migration
                 ->entry([
                     'key' => 'sender_email',
                     'value' => 'noreply@'.$_SERVER['HTTP_HOST']
+                ])
+                ->entry([
+                    'key' => 'notice_subject',
+                    'value' => 'Вы зарегистрированы на !%event_name%!'
                 ]);
+
+                ob_start();
+
+?>
+<p>Поздравляем! Вы зарегистрированы на !%event_name%!!</p>
+<p>Принять участие можно будет по этой ссылке: !%event_url%!</p>
+<p>С уважением, администрация !%site_name%!</p>
+<?php
+
+                $this
+                    ->entry([
+                        'key' => 'notice_text',
+                        'value' => ob_get_clean()
+                    ]);
 
         return $this;
         
